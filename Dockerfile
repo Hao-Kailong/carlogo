@@ -9,9 +9,9 @@ FROM ubuntu:22.04
 # 安装依赖包，如需其他依赖包，请到alpine依赖包管理(https://pkgs.alpinelinux.org/packages?name=php8*imagick*&branch=v3.13)查找。
 # 选用国内镜像源以提高下载速度
 # 安装python3、pip3、调用证书
-RUN sed -i 's/archive.ubuntu.com/mirrors.tencent.com/g' /etc/apt/sources.list \
-&& sed -i 's/security.ubuntu.com/mirrors.tencent.com/g' /etc/apt/sources.list \
-&& apt-get update \
+# RUN sed -i 's/archive.ubuntu.com/mirrors.tencent.com/g' /etc/apt/sources.list \
+# && sed -i 's/security.ubuntu.com/mirrors.tencent.com/g' /etc/apt/sources.list \
+RUN apt-get update \
 && apt-get install -y python3 \
 && apt-get install -y python3-pip \
 && apt-get install -y ca-certificates

@@ -10,6 +10,7 @@ FROM ubuntu:22.04
 # 选用国内镜像源以提高下载速度
 RUN sed -i 's/archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list \
 && apt-get update \
+&& apt-get upgrade \
 && apt-get install ca-certificates \
 && apt-get install -y python3 \
 && apt-get install -y python3-pip

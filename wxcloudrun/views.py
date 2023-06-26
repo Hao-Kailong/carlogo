@@ -6,9 +6,17 @@ from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 import requests
 import logging
+import random
+from wxcloudrun.function import MobileNetHandler
 
 # 初始化日志
 logger = logging.getLogger('log')
+
+# 初始化模型
+mobilenet = MobileNetHandler(
+    model_path='data/checkpoint/ckpt1',
+    label2index='data/LABEL2INDEX.json'
+)
 
 
 @app.route('/')
@@ -97,15 +105,34 @@ def predict():
                 ]
             }
         )
-        return make_succ_response(resp.json())
+        data = resp.json()
+        assert data['errcode'] == 0
+        downloadUrl = data['file_list'][0]['download_url']    
+        resp = requests.get(
+            url=downloadUrl, 
+            stream=True
+        )
+        if resp.status_code == 200:
+            target = 'img_{:02d}.jpg'.format(random.randint(0, 99))
+            with open(target, 'wb') as f:
+                f.write(resp.content)
+            logger.info('image save to {}'.format(target))
     except:
-        pass
-
-    return make_err_response('shit, 下载文件失败')
+        return make_err_response('下载文件失败')
 
     # 2.模型预测
+    inputs = mobilenet.process(target)
+    index, prob, name = mobilenet.predict(inputs)
+    logger.info('predict: {} {} {}'.format(index, prob, name))
+
+    return make_succ_response({
+        'index': index[0],
+        'prob': prob[0],
+        'name': name[0],
+    })
 
     # 3.读/写数据库
+
 
     # 4.返回结果
 

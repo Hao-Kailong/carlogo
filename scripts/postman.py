@@ -13,6 +13,12 @@ def carlogoPredict():
     print(resp.json())
 
 
+def downloadImage():
+    resp = requests.get("https://7072-prod-4g4980u9c357bad5-1309812088.tcb.qcloud.la/userUpload/hmeOlWhMDPMq5b915ca16c5c117e1a2c8b80c33b3d10", stream=True)
+    if resp.status_code == 200:
+        open('img.jpg', 'wb').write(resp.content)
+        print("ok")
 
-carlogoPredict()
+
+
 

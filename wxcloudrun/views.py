@@ -7,16 +7,12 @@ from wxcloudrun.response import make_succ_empty_response, make_succ_response, ma
 import requests
 import logging
 import random
-from wxcloudrun.function import MobileNetHandler
+
 
 # 初始化日志
 logger = logging.getLogger('log')
 
-# 初始化模型
-mobilenet = MobileNetHandler(
-    model_path='data/checkpoint/ckpt1',
-    label2index='data/LABEL2INDEX.json'
-)
+
 
 
 @app.route('/')
@@ -121,15 +117,35 @@ def predict():
         return make_err_response('下载文件失败')
 
     # 2.模型预测
-    inputs = mobilenet.process(target)
-    index, prob, name = mobilenet.predict(inputs)
-    logger.info('predict: {} {} {}'.format(index, prob, name))
+    try:
+        from wxcloudrun.function import MobileNetHandler
+    except:
+        logger.info('import ERROR SHIT')
+        return {'index': 0, 'prob': 0.0, 'name': ''}
 
-    return make_succ_response({
-        'index': index[0],
-        'prob': prob[0],
-        'name': name[0],
-    })
+    # 初始化模型
+    try:
+        mobilenet = MobileNetHandler(
+            model_path='data/checkpoint/ckpt1',
+            label2index='data/LABEL2INDEX.json'
+        )
+    except:
+        logger.info('model init ERROR SHIT')
+        return {'index': 0, 'prob': 0.0, 'name': ''}
+
+    try:
+        inputs = mobilenet.process(target)
+        index, prob, name = mobilenet.predict(inputs)
+        logger.info('predict: {} {} {}'.format(index, prob, name))
+
+        return make_succ_response({
+            'index': index[0],
+            'prob': prob[0],
+            'name': name[0],
+        })
+    except:
+        print('predict ERROR SHIT')
+        return {'index': 0, 'prob': 0.0, 'name': ''}
 
     # 3.读/写数据库
 

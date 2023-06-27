@@ -7,6 +7,7 @@ from wxcloudrun.response import make_succ_empty_response, make_succ_response, ma
 import requests
 import logging
 import random
+from wxcloudrun.function import Factory
 
 # 初始化日志
 logger = logging.getLogger('log')
@@ -115,22 +116,8 @@ def predict():
 
     # 2.模型预测
     try:
-        from wxcloudrun.function import Factory
-    except:
-        logger.info('import ERROR SHIT')
-        return {'index': 12, 'prob': 0.0, 'name': ''}
-
-    # 初始化模型
-    try:
         mobilenet = Factory.genMobilenet()
-    except:
-        return {'index': 45, 'prob': 0.0, 'name': ''}
-
-    try:
         inputs = mobilenet.process(target)
-    except:
-        return {'msg': 'process'}
-    try:
         index, prob, name = mobilenet.predict(inputs)
         return make_succ_response({
             'index': index[0],
@@ -139,7 +126,6 @@ def predict():
         })
     except:
         return {'msg': 'predict error'}
-
 
     # 3.读/写数据库
 

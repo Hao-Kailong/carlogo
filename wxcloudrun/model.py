@@ -13,3 +13,32 @@ class Counters(db.Model):
     count = db.Column(db.Integer, default=1)
     created_at = db.Column('createdAt', db.TIMESTAMP, nullable=False, default=datetime.now())
     updated_at = db.Column('updatedAt', db.TIMESTAMP, nullable=False, default=datetime.now())
+
+
+class Record(db.Model):
+    __tablename__ = 'Record'
+
+    fileID = db.Column(db.String(256), primary_key=True)
+    prob = db.Column(db.FLOAT)
+    LABEL = db.Column(db.String(64))
+    strategy = db.Column(db.String(64))
+
+    def __init__(self, fileid, prob, label, strategy):
+        self.fileID = fileid
+        self.prob = prob
+        self.LABEL = label
+        self.strategy = strategy
+
+
+class Feedback(db.Model):
+    __tablename__ = 'Feedback'
+
+    fileID = db.Column(db.String(256), primary_key=True)
+    comment = db.Column(db.String(512))
+
+    def __init__(self, fileid, comment):
+        self.fileID = fileid
+        self.comment = comment
+
+
+

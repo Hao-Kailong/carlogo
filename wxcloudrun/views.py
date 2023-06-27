@@ -2,7 +2,8 @@ from datetime import datetime
 from flask import render_template, request
 from run import app
 from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
-from wxcloudrun.model import Counters
+from wxcloudrun.dao import insert_record
+from wxcloudrun.model import Counters, Record, Feedback
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 import requests
 import logging
@@ -119,17 +120,38 @@ def predict():
         mobilenet = Factory.genMobilenet()
         inputs = mobilenet.process(target)
         index, prob, name = mobilenet.predict(inputs)
-        return make_succ_response({
-            'index': index[0],
-            'prob': prob[0],
-            'name': name[0],
-        })
+        return {
+            'index': int(index[0]),
+            'prob': float(prob[0]),
+            'name': str(name[0]),
+        }
     except:
-        return {'msg': 'predict error'}
+        return make_err_response('模型预测失败')
 
     # 3.读/写数据库
 
+
     # 4.返回结果
+
+
+@app.route('/api/record', methods=['POST'])
+def record():
+    """
+    测试数据库写入
+    """
+    params = request.get_json()
+    logger.info('params: {}'.format(params))
+
+    cur = Record(
+        fileid=params.get('fileid', ''),
+        prob=params.get('prob', 0.0),
+        label=params.get('label', ''),
+        strategy=params.get('strategy', ''),
+    )
+
+    insert_record(cur)
+    return make_succ_empty_response()
+
 
 
 

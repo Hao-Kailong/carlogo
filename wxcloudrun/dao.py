@@ -62,3 +62,12 @@ def update_counterbyid(counter):
         db.session.commit()
     except OperationalError as e:
         logger.info("update_counterbyid errorMsg= {} ".format(e))
+
+
+def insert_record(record):
+    try:
+        db.session.add(record)
+        db.session.commit()
+    except OperationalError as e:
+        logger.info("insert_record errorMsg= {} ".format(e))
+

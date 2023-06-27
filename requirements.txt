@@ -13,3 +13,4 @@ tensorflow==2.9.0
 keras==2.9.0
 numpy==1.23.5
 protobuf==3.19.0
+pillow==9.3.0

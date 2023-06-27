@@ -29,6 +29,20 @@ class MobileNetHandler:
         return index, prob, name
 
 
+class Factory:
+    mobilenet = None
+
+    @classmethod
+    def genMobilenet(cls):
+        if cls.mobilenet is None:
+            cls.mobilenet = MobileNetHandler(
+                model_path='data/checkpoint/ckpt1',
+                label2index='data/LABEL2INDEX.json',
+            )
+            return cls.mobilenet
+        else:
+            return cls.mobilenet
+
 
 
 

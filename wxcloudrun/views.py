@@ -118,25 +118,23 @@ def predict():
 
     # 2.模型预测
     try:
-        from wxcloudrun.function import MobileNetHandler
+        from wxcloudrun.function import Factory
     except:
         logger.info('import ERROR SHIT')
-        return {'index': 0, 'prob': 0.0, 'name': ''}
+        return {'index': 12, 'prob': 0.0, 'name': ''}
 
     # 初始化模型
     try:
-        mobilenet = MobileNetHandler(
-            model_path='data/checkpoint/ckpt1',
-            label2index='data/LABEL2INDEX.json'
-        )
+        mobilenet = Factory.genMobilenet()
     except:
-        logger.info('model init ERROR SHIT')
-        return {'index': 0, 'prob': 0.0, 'name': ''}
+        return {'index': 45, 'prob': 0.0, 'name': ''}
 
     try:
         inputs = mobilenet.process(target)
+        logger.warn('process finish')
         index, prob, name = mobilenet.predict(inputs)
-        logger.info('predict: {} {} {}'.format(index, prob, name))
+        logger.warn('predict finish')
+        logger.warn('predict: {} {} {}'.format(index, prob, name))
 
         return make_succ_response({
             'index': index[0],
@@ -145,10 +143,9 @@ def predict():
         })
     except:
         print('predict ERROR SHIT')
-        return {'index': 0, 'prob': 0.0, 'name': ''}
+        return {'index': 99, 'prob': 0.0, 'name': ''}
 
     # 3.读/写数据库
-
 
     # 4.返回结果
 

@@ -8,11 +8,8 @@ import requests
 import logging
 import random
 
-
 # 初始化日志
 logger = logging.getLogger('log')
-
-
 
 
 @app.route('/')
@@ -131,19 +128,18 @@ def predict():
 
     try:
         inputs = mobilenet.process(target)
-        logger.warn('process finish')
+    except:
+        return {'msg': 'process'}
+    try:
         index, prob, name = mobilenet.predict(inputs)
-        logger.warn('predict finish')
-        logger.warn('predict: {} {} {}'.format(index, prob, name))
-
         return make_succ_response({
             'index': index[0],
             'prob': prob[0],
             'name': name[0],
         })
     except:
-        print('predict ERROR SHIT')
-        return {'index': 99, 'prob': 0.0, 'name': ''}
+        return {'msg': 'predict error'}
+
 
     # 3.读/写数据库
 

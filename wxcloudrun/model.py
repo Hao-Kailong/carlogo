@@ -41,4 +41,23 @@ class Feedback(db.Model):
         self.comment = comment
 
 
+class Info(db.Model):
+    __tablename__ = 'Info'
+
+    LABEL = db.Column(db.String(64), primary_key=True)
+    brand = db.Column(db.String(64))
+    nickname = db.Column(db.String(128))
+    origin = db.Column(db.String(512))
+    company = db.Column(db.String(512))
+    createtime = db.Column(db.String(128))
+    cofounder = db.Column(db.String(512))
+    site = db.Column(db.String(512))
+    about = db.Column(db.Text)
+
+
+
+
+
+
+
 

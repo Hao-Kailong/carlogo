@@ -2,8 +2,8 @@ from datetime import datetime
 from flask import render_template, request
 from run import app
 from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
-from wxcloudrun.dao import insert_record
-from wxcloudrun.model import Counters, Record, Feedback
+from wxcloudrun.dao import insert_record, query_infobylabel
+from wxcloudrun.model import Counters, Record, Feedback, Info
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 import requests
 import logging
@@ -120,7 +120,7 @@ def predict():
         mobilenet = Factory.genMobilenet()
         inputs = mobilenet.process(target)
         index, prob, name = mobilenet.predict(inputs)
-        return {
+        result = {
             'index': int(index[0]),
             'prob': float(prob[0]),
             'name': str(name[0]),
@@ -129,29 +129,37 @@ def predict():
         return make_err_response('模型预测失败')
 
     # 3.读/写数据库
-
+    try:
+        cur = Record(
+            fileid=fileID,
+            prob=result['prob'],
+            label=result['name'],
+            strategy='MobileNetV01',
+        )
+        insert_record(cur)
+    except:
+        return make_err_response('写数据库失败')
+    
+    try:
+        info = query_infobylabel(result['name'])
+    except:
+        return make_err_response('读数据库失败')
 
     # 4.返回结果
-
-
-@app.route('/api/record', methods=['POST'])
-def record():
-    """
-    测试数据库写入
-    """
-    params = request.get_json()
-    logger.info('params: {}'.format(params))
-
-    cur = Record(
-        fileid=params.get('fileid', ''),
-        prob=params.get('prob', 0.0),
-        label=params.get('label', ''),
-        strategy=params.get('strategy', ''),
-    )
-
-    insert_record(cur)
-    return make_succ_empty_response()
-
+    if info is None:
+        return make_succ_empty_response()
+    else:
+        return make_succ_response({
+            'label': str(info.LABEL),
+            'brand': str(info.brand),
+            'nickname': str(info.nickname),
+            'origin': str(info.origin),
+            'company': str(info.company),
+            'createtime': str(info.createtime),
+            'cofounder': str(info.cofounder),
+            'site': str(info.site),
+            'about': str(info.about),
+        })
 
 
 

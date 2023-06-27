@@ -3,7 +3,7 @@ import logging
 from sqlalchemy.exc import OperationalError
 
 from wxcloudrun import db
-from wxcloudrun.model import Counters
+from wxcloudrun.model import Counters, Info
 
 # 初始化日志
 logger = logging.getLogger('log')
@@ -70,4 +70,14 @@ def insert_record(record):
         db.session.commit()
     except OperationalError as e:
         logger.info("insert_record errorMsg= {} ".format(e))
+
+
+def query_infobylabel(label):
+    try:
+        return Info.query.filter(Info.LABEL == label).first()
+    except OperationalError as e:
+        logger.info("query_infobylabel errorMsg= {} ".format(e))
+        return None
+
+
 
